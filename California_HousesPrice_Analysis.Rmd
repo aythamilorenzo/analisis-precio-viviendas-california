@@ -1,0 +1,37 @@
+---
+title: "California_HousesPrice_Analysis"
+author: "Aythami Lorenzo"
+date: "2025-06-25"
+output: html_document
+---
+
+# Cargamos las librerías e importamos el dataset desde RStudio
+
+```{r}
+
+library(rmarkdown)
+library(car)
+library(nortest)
+
+```
+
+## Construimos el modelo de regresión lineal múltiples
+
+** Queremos ver como se comporta el precio de las casas en California **
+
+```{r}
+reg.mult <- lm(median_house_value ~ longitude + latitude + housing_median_age +
+                 total_rooms + total_bedrooms + population + households +                          median_income + ocean_proximity, data = housing)
+
+summary(reg.mult)
+
+```
+
+## Todas las variables son significativas, haremos unas comprobaciones
+
+### Colinealidad
+
+vif(reg.mult)
+
+El modelo presenta problemas de colinealidad, tendremos que eliminar variables
+
