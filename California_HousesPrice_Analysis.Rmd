@@ -30,20 +30,18 @@ output: html_document
 # Instalamos y cargamos las librerías e importamos el dataset desde RStudio
 
 ```{r}
-install.packages("brms")
-install.packages("cmdstanr")
-install.packages("rmarkdown")
-install.packages("car")
-install.packages("nortest")
-```
-
-```{r}
 library(rmarkdown)
 library(car)
 library(nortest)
 library(brms)
+library(remotes)
+library(cmdstanr)
+
+housing <- read.csv("housing.csv")
+housing$ocean_proximity <- as.factor(housing$ocean_proximity)
 
 ```
+
 
 ## Construimos el modelo de regresión lineal múltiples
 
