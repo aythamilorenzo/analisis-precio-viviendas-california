@@ -42,7 +42,6 @@ library(rmarkdown)
 library(car)
 library(nortest)
 library(brms)
-library(cmdstanr)
 
 ```
 
