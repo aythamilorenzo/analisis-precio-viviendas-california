@@ -27,19 +27,28 @@ output: html_document
 
 10. oceanProximity : Ubicación de la casa con respecto al océano/mar
 
-# Cargamos las librerías e importamos el dataset desde RStudio
+# Instalamos y cargamos las librerías e importamos el dataset desde RStudio
 
 ```{r}
+install.packages("brms")
+install.packages("cmdstanr")
+install.packages("rmarkdown")
+install.packages("car")
+install.packages("nortest")
+```
 
+```{r}
 library(rmarkdown)
 library(car)
 library(nortest)
-library(lmtest)
+library(brms)
+library(cmdstanr)
+
 ```
 
 ## Construimos el modelo de regresión lineal múltiples
 
-** Queremos ver como se comporta el precio de las casas en California **
+**Queremos ver como se comporta el precio de las casas en California según los distintos factores**
 
 ```{r}
 reg.mult <- lm(median_house_value ~ longitude + latitude + housing_median_age +
@@ -50,7 +59,7 @@ AIC(reg.mult)
 
 ```
 
-# Análisis de residuos
+## Análisis de residuos
 
 1. Media 0
 2. Homocedasticidad
@@ -62,7 +71,7 @@ plot(reg.mult$residuals)
 lillie.test(reg.mult$residuals)
 
 ```
-Este modelo no cumple los supuestos, los residuos no son normales
+Este modelo no cumple los supuestos, los residuos no son normales según el método analítico, además, se puede mejorar
 
 ## Todas las variables son significativas, haremos unas comprobaciones
 
@@ -72,7 +81,7 @@ vif(reg.mult)
 
 ```
 
-El modelo presenta problemas de colinealidad, tendremos que eliminar variables
+**El modelo presenta problemas de colinealidad, tendremos que eliminar variables**
 
 ```{r}
 reg.mult2 <- lm(log(median_house_value) ~ longitude + housing_median_age +                 log(total_rooms) + log(population) + median_income + ocean_proximity,
@@ -85,7 +94,7 @@ AIC(reg.mult2)
 
 ** Mejor modelo tomando logaritmos en las variables grande y dejando la colinealidad de 5 en el vif, presenta el menor AIC **
 
-El primer modelo presenta un 2% mas de coeficiente de determinación, sin embargo, su AIC es mucho mayor que el del segundo modelo que presenta menos coeficiente de determinación (62,35%); luego, para predicciones más precisas utilizaremos el segundo modelo, ya que este presenta menos 'ruido', este explica el 62,35% de los cambios en el precio
+El primer modelo presenta un 2% mas de coeficiente de determinación, sin embargo, su AIC es mucho mayor que el del segundo modelo que presenta menos coeficiente de determinación (62,35%); luego, para predicciones más precisas utilizaremos el segundo modelo, ya que este presenta menos 'ruido', este explica el 62,35% de los cambios en el precio.
 
 # Análisis de residuos
 
@@ -104,13 +113,13 @@ qqline(reg.mult2$residuals, col ="red")
 
 *Los residuos tienen problemas de normalidad por el método analítico, sin embargo, cuando los analizamos gráficamente vemos que en la media [-2, 2], los residuos se ajustan bastante bien a la recta y que los problemas están en las colas con algunos outliers. Al estar trabajando con inferencia bayesiana y al tratarse de un análisis de prueba, podemos dejar pasar este hecho. Si quisieramos un análisis más robusto podríamos usar una distribución t de student ya que esta admite más peso en sus colas*
 
-## Interpretación de las variables
+# Interpretación de las variables
 
-# Nos fijamos en las variables significativas (p-valor bajo), al 95%
+## Nos fijamos en las variables significativas (p-valor bajo), al 95%
 
-- Si la casa estuviera una unidad más al oeste, el precio disminuiría un 0.0095%
+- Si la casa estuviera una unidad más al oeste, el precio **disminuiría** un **0.0095%**
 
-- Si la edad media de las casas fueran un año más antiguas, su precio aumentaría un 0.0297%
+- Si la edad media de las casas fueran un año más antiguas, su precio **aumentaría** un **0.0297%**
 
 - Si el número total de habitaciones aumentara un 1%, el precio de las casas **aumentaría** un **0.677%**
 
@@ -118,26 +127,73 @@ qqline(reg.mult2$residuals, col ="red")
 
 - Si vamos a una zona donde los ingresos medios de cada vivienda fueran en media 10000 usd mayores, el precio de las viviendas **aumentaría** un **0.1447%**
 
-- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un 0.558% menos
+- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un **0.558% menos**
 
-** Con respecto a la proximidad del mar, el modelo toma como referencia las que están a menos de 1 hora del mar **
+**Con respecto a la proximidad del mar, el modelo toma como referencia las que están a menos de 1 hora del mar**
 
-- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un 0.558% menos que las que están a menos de 1 hora del mar
+- El hecho de que las viviendas de la manzana estén situadas en una zona de interior, lejos del mar, hace que estas cuesten un **0.558% menos** que las que están a menos de 1 hora del mar
 
-- El hecho de que las viviendas se encuentren en una isla, hace que estas valgan un 0.654% más que las situadas a menos de 1 hora del mar
+- El hecho de que las viviendas se encuentren en una isla, hace que estas valgan un **0.654% más** que las situadas a menos de 1 hora del mar
 
-- Parece que el hecho de que las viviendas estén cerca de la bahía no tienen impacto en el precio de estas con respecto a las situadas a menos de 1 hora del mar
+- Parece que el hecho de que las viviendas estén cerca de la bahía **no tienen impacto** en el precio de estas con respecto a las situadas a menos de 1 hora del mar
 
-- Parece que el hecho de que las viviendas estén cerca de la bahía no tienen impacto en el precio de estas con respecto a las situadas a menos de 1 hora del mar
+- Parece que el hecho de que las viviendas estén cerca de la bahía **no tienen impacto** en el precio de estas con respecto a las situadas a menos de 1 hora del mar
 
-Las variables que más influyen en el precio son el estar ubicado en interiores o en una isla.
-
-
+Las variables que más influyen en el precio son el estar ubicado en **interiores** o en una **isla**.
 
 
 
+
+# Modelo utilizando una T DE STUDENT
+
+```{r}
+reg.mult.tstudent <- brm(
+  formula = log(median_house_value) ~ longitude + housing_median_age +
+            log(total_rooms) + log(population) + median_income + ocean_proximity,
+  data = housing,  
+  family = student(),
+  prior = c(
+    prior(normal(0, 5), class = "b"),
+    prior(normal(0, 5), class = "Intercept"),
+    prior(student_t(3, 0, 10), class = "sigma"),
+    prior(gamma(2, 0.1), class = "nu") # grados de libertad
+  ),
+  chains = 4,
+  iter = 6000,
+  cores = 4,
+  warmup = 1000,
+  seed = 123
+)
+
+summary(reg.mult.tstudent)
+
+```
+
+## Diagnóstico gráfico
+
+```{r}
+
+plot(reg.mult.tstudent)      # Trazas MCMC y densidades
+pp_check(reg.mult.tstudent)  # Ver si los residuos ajustan bien
+
+```
+
+## Coeficiente R squared
+
+```{r}
+bayes_R2(reg.mult.tstudent) 
  
 
+```
+
+# Conclusiones 
+
+
+Tras comparar ambos modelos podemos ver que a pesar de usar una t de student los outliers siguen siendo un problema como podemos ver en el diagnóstico gráfico, sin embargo, las cadenas para los parámetros del modelo convergen bien. Podemos afirmar que no sería mala idea utilizar este modelo ya que los grados de libertad de la distribución son aproximadamente 7 y no es un número muy grande por lo que se aleja de una normal y quizás soporta de mejor manera los outliers que presentan los datos a pesar de que no lo hace de manera perfecta.
+
+Con respecto a las interpretaciones vemos que muchas son similares tras lanzar el summary, excepto porque de este modelo concluimos que la mediana de la antigüedad de las casas no influye en el precio y que al contrario del primer modelo, ahora el hecho de que las casas estén cerca de la bahía si es significativo en el precio.
+
+A pesar de eso, creo que ambos modelos reflejan de una aceptable la relación entre el precio de las casas y las variables explicativas.
 
 
 

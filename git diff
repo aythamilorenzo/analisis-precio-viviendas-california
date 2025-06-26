@@ -1,0 +1,61 @@
+[1mdiff --git a/California_HousesPrice_Analysis.Rmd b/California_HousesPrice_Analysis.Rmd[m
+[1mindex e981a5e..673cfc8 100644[m
+[1m--- a/California_HousesPrice_Analysis.Rmd[m
+[1m+++ b/California_HousesPrice_Analysis.Rmd[m
+[36m@@ -39,7 +39,7 @@[m [mlibrary(lmtest)[m
+ [m
+ ## Construimos el modelo de regresión lineal múltiples[m
+ [m
+[31m-** Queremos ver como se comporta el precio de las casas en California **[m
+[32m+[m[32m**Queremos ver como se comporta el precio de las casas en California según los distintos factores**[m
+ [m
+ ```{r}[m
+ reg.mult <- lm(median_house_value ~ longitude + latitude + housing_median_age +[m
+[36m@@ -62,7 +62,7 @@[m [mplot(reg.mult$residuals)[m
+ lillie.test(reg.mult$residuals)[m
+ [m
+ ```[m
+[31m-Este modelo no cumple los supuestos, los residuos no son normales[m
+[32m+[m[32mEste modelo no cumple los supuestos, los residuos no son normales según el método analítico, además, se puede mejorar[m
+ [m
+ ## Todas las variables son significativas, haremos unas comprobaciones[m
+ [m
+[36m@@ -108,9 +108,9 @@[m [mqqline(reg.mult2$residuals, col ="red")[m
+ [m
+ # Nos fijamos en las variables significativas (p-valor bajo), al 95%[m
+ [m
+[31m-- Si la casa estuviera una unidad más al oeste, el precio disminuiría un 0.0095%[m
+[32m+[m[32m- Si la casa estuviera una unidad más al oeste, el precio **disminuiría** un **0.0095%**[m
+ [m
+[31m-- Si la edad media de las casas fueran un año más antiguas, su precio aumentaría un 0.0297%[m
+[32m+[m[32m- Si la edad media de las casas fueran un año más antiguas, su precio **aumentaría** un **0.0297%**[m
+ [m
+ - Si el número total de habitaciones aumentara un 1%, el precio de las casas **aumentaría** un **0.677%**[m
+ [m
+[36m@@ -118,19 +118,19 @@[m [mqqline(reg.mult2$residuals, col ="red")[m
+ [m
+ - Si vamos a una zona donde los ingresos medios de cada vivienda fueran en media 10000 usd mayores, el precio de las viviendas **aumentaría** un **0.1447%**[m
+ [m
+[31m-- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un 0.558% menos[m
+[32m+[m[32m- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un **0.558% menos**[m
+ [m
+[31m-** Con respecto a la proximidad del mar, el modelo toma como referencia las que están a menos de 1 hora del mar **[m
+[32m+[m[32m**Con respecto a la proximidad del mar, el modelo toma como referencia las que están a menos de 1 hora del mar**[m
+ [m
+[31m-- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un 0.558% menos que las que están a menos de 1 hora del mar[m
+[32m+[m[32m- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un **0.558% menos** que las que están a menos de 1 hora del mar[m
+ [m
+[31m-- El hecho de que las viviendas se encuentren en una isla, hace que estas valgan un 0.654% más que las situadas a menos de 1 hora del mar[m
+[32m+[m[32m- El hecho de que las viviendas se encuentren en una isla, hace que estas valgan un **0.654% más** que las situadas a menos de 1 hora del mar[m
+ [m
+[31m-- Parece que el hecho de que las viviendas estén cerca de la bahía no tienen impacto en el precio de estas con respecto a las situadas a menos de 1 hora del mar[m
+[32m+[m[32m- Parece que el hecho de que las viviendas estén cerca de la bahía **no tienen impacto** en el precio de estas con respecto a las situadas a menos de 1 hora del mar[m
+ [m
+[31m-- Parece que el hecho de que las viviendas estén cerca de la bahía no tienen impacto en el precio de estas con respecto a las situadas a menos de 1 hora del mar[m
+[32m+[m[32m- Parece que el hecho de que las viviendas estén cerca de la bahía **no tienen impacto** en el precio de estas con respecto a las situadas a menos de 1 hora del mar[m
+ [m
+[31m-Las variables que más influyen en el precio son el estar ubicado en interiores o en una isla.[m
+[32m+[m[32mLas variables que más influyen en el precio son el estar ubicado en **interiores** o en una **isla**.[m
+ [m
+ [m
+ [m
