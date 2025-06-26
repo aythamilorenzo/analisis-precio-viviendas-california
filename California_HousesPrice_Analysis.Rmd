@@ -1,9 +1,31 @@
 ---
-title: "California_HousesPrice_Analysis"
+title: "California_HousePrices_Analysis"
 author: "Aythami Lorenzo"
 date: "2025-06-25"
 output: html_document
 ---
+
+# Descripción de las variables
+
+1. longitud : Una medida de qué tan al oeste está una casa; un valor más alto es más al oeste
+
+2. latitud : Una medida de qué tan al norte está una casa; un valor más alto es más al norte
+
+3. housingMedianAge : Edad media de una casa dentro de una manzana; un número más bajo es un edificio más nuevo
+
+4. totalRooms : Número total de habitaciones dentro de una manzana
+
+5. totalBedrooms : Número total de dormitorios dentro de una manzana
+
+6. Population : Número total de personas que residen dentro de una manzana
+
+7. homes : Número total de hogares, un grupo de personas que residen dentro de una unidad de vivienda, para una manzana
+
+8. medianIncome : Ingreso medio de los hogares dentro de una manzana de casas (medido en decenas de miles de dólares estadounidenses)
+
+9. medianHouseValue : Valor medio de la casa para los hogares dentro de una manzana (medido en dólares estadounidenses)
+
+10. oceanProximity : Ubicación de la casa con respecto al océano/mar
 
 # Cargamos las librerías e importamos el dataset desde RStudio
 
@@ -24,14 +46,59 @@ reg.mult <- lm(median_house_value ~ longitude + latitude + housing_median_age +
                  total_rooms + total_bedrooms + population + households +                          median_income + ocean_proximity, data = housing)
 
 summary(reg.mult)
+AIC(reg.mult)
 
 ```
 
 ## Todas las variables son significativas, haremos unas comprobaciones
 
 ### Colinealidad
-
+```{r}
 vif(reg.mult)
 
+```
+
 El modelo presenta problemas de colinealidad, tendremos que eliminar variables
+
+```{r}
+reg.mult2 <- lm(log(median_house_value) ~ longitude + housing_median_age +                 log(total_rooms) + log(population) + median_income + ocean_proximity,
+                data = housing)
+
+summary(reg.mult2)
+vif(reg.mult2)
+AIC(reg.mult2)
+```
+
+** Mejor modelo tomando logaritmos en las variables grande y dejando la colinealidad de 5 en el vif, presenta el menor AIC **
+
+El primer modelo presenta un 2% mas de coeficiente de determinación, sin embargo, su AIC es mucho mayor que el del segundo modelo que presenta menos coeficiente de determinación (62,35%); luego, para predicciones más precisas utilizaremos el segundo modelo, ya que este presenta menos 'ruido', este explica el 62,35% de los cambios en el precio
+
+## Interpretación de las variables
+
+# Nos fijamos en las variables significativas (p-valor bajo), al 95%
+
+- Si la casa estuviera una unidad más al oeste, el precio disminuiría un 0.0095%
+
+- Si la edad media de las casas fueran un año más antiguas, su precio aumentaría un 0.0297%
+
+- Si el número total de habitaciones aumentara un 1%, el precio de las casas **aumentaría** un **0.677%**
+
+- Si el número de personas que residen en una manzana aumentara un 1%, el precio de las casas **disminuirá** un **0.228%**
+
+- Si vamos a una zona donde los ingresos medios de cada vivienda fueran en media 10000 usd mayores, el precio de las viviendas **aumentaría** un **0.1447%**
+
+- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un 0.558% menos
+
+** Con respecto a la proximidad del mar, el modelo toma como referencia las que están a menos de 1 hora del mar **
+
+- El hecho de que las viviendas de la manzana estén situadas en una zona de interior lejos del mar hace que estas cuesten un 0.558% menos que las que están a menos de 1 hora del mar
+
+- El hecho de que las viviendas se encuentren en una isla, hace que estas valgan un 0.654% más que las situadas a menos de 1 hora del mar
+
+- Parece que el hecho de que las viviendas estén cerca de la bahía no tienen impacto en el precio de estas con respecto a las situadas a menos de 1 hora del mar
+
+- Parece que el hecho de que las viviendas estén cerca de la bahía no tienen impacto en el precio de estas con respecto a las situadas a menos de 1 hora del mar
+
+Las variables que más influyen en el precio son el estar ubicado en interiores o en una isla.
+
 
