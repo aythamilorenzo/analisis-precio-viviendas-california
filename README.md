@@ -106,6 +106,9 @@ Consulta el archivo LICENSE para más información.
 
 ## 👤 Autor
 Aythami Lorenzo Padilla
+
 Estudiante de Ciencia e Ingeniería de Datos
+
 📧 aythamilorenzo06@gmail.com
+
 🔗 [GitHub](https://github.com/aythamilorenzo)
