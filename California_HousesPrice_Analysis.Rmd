@@ -114,9 +114,12 @@ vif(reg.mult2)
 AIC(reg.mult2)
 ```
 
+ Hemos transformado las variables grandes en logaritmos para que esté todo más concentrado y no tener variables sesgadas.
+ 
  Como vemos el modelo mejora drásticamente en términos de AIC y en general los problemas de colinealidad se han corregido, ahora solo tenemos dos variables que presentan una correlación moderada (vif cercano a 5).
 
  Los modelos presentan coeficientes de determinación similares, luego, de acuerdo con el criterio del AIC, para predicciones más precisas utilizaremos el segundo modelo, ya que este ofrece menos 'ruido'.
+
 
 **Nuestro modelo explica el 64,08% de los cambios en los precios.**
 
