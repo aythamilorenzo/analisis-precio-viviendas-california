@@ -1,13 +1,13 @@
 ---
-title: "California Houses Price Bayesian Analysis"
+title: "California Houses Price Analysis"
 author: "Aythami Lorenzo"
 date: "2025-06-25"
 output: html_document
 ---
 
+<hr>
 
-
-#Descripción de las variables
+# <u>Descripción de las variables</u>
 
 1. **longitud** : Una medida de qué tan al oeste está una casa; un valor más alto es más al oeste.
 
@@ -30,8 +30,10 @@ output: html_document
 10. **oceanProximity** : Ubicación de la casa con respecto al océano/mar.
 
 
+<hr>
 
-#Cargamos las librerías e importamos el dataset desde RStudio
+
+# <u>Cargamos las librerías e importamos el dataset</u>
 
 ```{r}
 library(rmarkdown)
@@ -46,8 +48,9 @@ housing$ocean_proximity <- as.factor(housing$ocean_proximity)
 
 ```
 
+<hr>
 
-#Construimos el modelo de regresión lineal múltiple
+# <u>Construimos el modelo de regresión lineal múltiple</u>
 
 
  **Queremos ver como se comporta el precio de las casas en California según los distintos factores.**
@@ -64,7 +67,7 @@ summary(reg.mult)
  *Como vemos, todas las variables son significativas al 95% (alpha <- 0.05), pero antes de empezar a interpretar tenemos que hacer algunas comprobaciones para verificar la robustez del modelo.*
 
 
-##Criterio del AIC
+## <u>Criterio del AIC</u>
 
 ```{r}
 AIC(reg.mult)
@@ -75,7 +78,7 @@ AIC(reg.mult)
 
 
 
-##Análisis de residuos
+## <u>Análisis de residuos</u>
 
 Condiciones que deben cumplirse para los residuos:
 
@@ -90,11 +93,11 @@ lillie.test(reg.mult$residuals)
 
 ```
 
- *Este modelo no cumple todos los supuestos, la media se puede considerar 0 y podemos también considerar homocedasticidad ya que en el plot no se observan tendencias, se ven puntos aleatorios, sin embargo, los residuos no son normales según el método analítico, además, este modelo se puede mejorar haciendo algunos ajustes*
+ *Este modelo no cumple todos los supuestos, la media se puede considerar 0 y podemos también considerar homocedasticidad ya que en el plot no se observan tendencias, se ven puntos aleatorios, sin embargo, los residuos no son normales según el método analítico, además, este modelo se puede mejorar haciendo algunos ajustes.*
 
 
 
-##Colinealidad
+## <u>Colinealidad</u>
 ```{r}
 vif(reg.mult)
 
@@ -103,7 +106,7 @@ vif(reg.mult)
 
 **Tendremos que eliminar algunas variables**
 
-#Segundo modelo de regresión lineal múltiple
+# <u>Segundo modelo de regresión lineal múltiple</u>
 
 ```{r}
 reg.mult2 <- lm(log(median_house_value) ~ longitude + housing_median_age +                 log(total_rooms) + log(population) + median_income + ocean_proximity,
@@ -123,7 +126,7 @@ AIC(reg.mult2)
 
 **Nuestro modelo explica el 64,08% de los cambios en los precios.**
 
-#Análisis de residuos
+# <u>Análisis de residuos</u>
 
 Condiciones que deben cumplirse para los residuos:
 
@@ -143,9 +146,11 @@ qqline(reg.mult2$residuals, col ="red")
  *Los residuos tienen problemas de normalidad por el método analítico, sin embargo, cuando los analizamos gráficamente vemos que en la media [-2, 2], los residuos se ajustan bastante bien a la recta y que los problemas están en las colas con algunos outliers. Al estar trabajando con inferencia bayesiana y al tratarse de un análisis de prueba, podemos dejar pasar este hecho. Si quisieramos un análisis más robusto podríamos usar una distribución t de student ya que esta admite más peso en sus colas.*
 
 
+<hr>
 
 
-#Interpretación de las variables
+
+# <u>Interpretación de las variables</u>
 
 ##Nos fijamos en las variables significativas (p-valor bajo), al 95%
 
@@ -174,9 +179,10 @@ qqline(reg.mult2$residuals, col ="red")
  Las variables que más influyen en el precio son el estar ubicado en **interiores** o en una **isla**
 
 
+<hr>
 
 
-#Modelo utilizando una distribución t de student
+# <u>Modelo utilizando una distribución t de student</u>
 
  Probaremos a utilizar esta distribución ya que admite más peso en sus colas y quizás soporte de mejor manera los outliers para llegar a predicciones más precisas.
 
@@ -208,7 +214,7 @@ summary(reg.mult.tstudent)
 
  *Debemos tener en cuenta que, en este caso, estamos utilizando muestreo MCMC, por lo que los coeficientes estimados pueden variar ligeramente según la semilla utilizada, ya que el procedimiento se basa en cadenas de muestreo aleatorias.*
 
-##Diagnóstico gráfico
+## <u>Diagnóstico gráfico</u>
 
 ```{r}
 
@@ -225,7 +231,7 @@ pp_check(reg.mult.tstudent)  # Ver si los datos simulados se ajustan bien
 
  Sin embargo, cuando se simulan datos basados en esas distribuciones a posteriori y se comparan con los datos reales, vemos que el modelo no está captando bien los datos de la distribución observada como, por ejemplo, ese segundo pico.
 
-##Coeficiente de determinación
+## <u>Coeficiente de determinación</u>
 
 ```{r}
 bayes_R2(reg.mult.tstudent) 
@@ -235,7 +241,11 @@ bayes_R2(reg.mult.tstudent)
 
  En cuanto al coeficiente de determinación vemos que este es ligeramente superior al del modelo gaussiano.
 
-#Conclusiones
+
+<hr>
+
+
+# <u>Conclusiones</u>
 
 
  *Tras comparar ambos modelos podemos ver que a pesar de usar una t de student los outliers siguen siendo un problema como podemos ver en el diagnóstico gráfico, sin embargo, las cadenas para los parámetros del modelo convergen bien. Podemos afirmar que no sería mala idea utilizar este modelo ya que los grados de libertad de la distribución son aproximadamente 7 y no es un número muy grande por lo que se aleja de una normal y quizás soporta de mejor manera los outliers que presentan los datos a pesar de que no lo hace de manera perfecta.*
