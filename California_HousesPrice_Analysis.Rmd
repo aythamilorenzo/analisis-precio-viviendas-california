@@ -61,7 +61,7 @@ summary(reg.mult)
 
 ```
 
- *Como vemos todas las variables son significativas al 95% (alpha <- 0.05), pero antes de empezar a interpretar tenemos que hacer algunas comprobaciones para verificar la robustez del modelo.*
+ *Como vemos, todas las variables son significativas al 95% (alpha <- 0.05), pero antes de empezar a interpretar tenemos que hacer algunas comprobaciones para verificar la robustez del modelo.*
 
 
 ##Criterio del AIC
@@ -103,7 +103,7 @@ vif(reg.mult)
 
 **Tendremos que eliminar algunas variables**
 
-#Segundo modelo de regresión lineal multiple
+#Segundo modelo de regresión lineal múltiple
 
 ```{r}
 reg.mult2 <- lm(log(median_house_value) ~ longitude + housing_median_age +                 log(total_rooms) + log(population) + median_income + ocean_proximity,
@@ -116,7 +116,7 @@ AIC(reg.mult2)
 
  Hemos transformado las variables grandes en logaritmos para que esté todo más concentrado y no tener variables sesgadas.
  
- Como vemos el modelo mejora drásticamente en términos de AIC y en general los problemas de colinealidad se han corregido, ahora solo tenemos dos variables que presentan una correlación moderada (vif cercano a 5).
+ Como vemos, el modelo mejora drásticamente en términos de AIC y en general los problemas de colinealidad se han corregido, ahora solo tenemos dos variables que presentan una correlación moderada (vif cercano a 5).
 
  Los modelos presentan coeficientes de determinación similares, luego, de acuerdo con el criterio del AIC, para predicciones más precisas utilizaremos el segundo modelo, ya que este ofrece menos 'ruido'.
 
